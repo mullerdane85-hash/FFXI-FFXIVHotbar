@@ -86,36 +86,38 @@ function parser.parse(src)
     local line_num = 0
     for line in src:gmatch('([^\n]*)\n?') do
         line_num = line_num + 1
-        if line == '' then goto continue end
+        -- Lua 5.1 (Windower) has no `continue` and no `goto`, so the
+        -- skip-empty-line case is handled by wrapping the body in an
+        -- `if line ~= ''` instead of a guard + jump.
+        if line ~= '' then
+            -- Strip leading whitespace, check for comment prefix
+            local stripped = line:gsub('^%s+', '')
+            local commented = stripped:sub(1, 2) == '--'
+            if commented then stripped = stripped:gsub('^%-%-%s*', '') end
 
-        -- Strip leading whitespace, check for comment prefix
-        local stripped = line:gsub('^%s+', '')
-        local commented = stripped:sub(1, 2) == '--'
-        if commented then stripped = stripped:gsub('^%-%-%s*', '') end
-
-        if stripped:sub(1, 1) == '{' then
-            -- Try to parse the table literal
-            local fields, _ = parse_table_literal(stripped, 1)
-            if fields and #fields >= 1 then
-                local slot_id = fields[1] or ''
-                local hb, sl = slot_id:match('^battle%s+(%d+)%s+(%d+)$')
-                if hb and sl then
-                    slots[slot_id] = {
-                        hotbar    = tonumber(hb),
-                        slot      = tonumber(sl),
-                        slot_id   = slot_id,
-                        cmd       = fields[2] or '',
-                        action    = fields[3] or '',
-                        target    = fields[4] or '',
-                        label     = fields[5] or '',
-                        type_hint = fields[6] or '',
-                        commented = commented,
-                        line      = line_num,
-                    }
+            if stripped:sub(1, 1) == '{' then
+                -- Try to parse the table literal
+                local fields, _ = parse_table_literal(stripped, 1)
+                if fields and #fields >= 1 then
+                    local slot_id = fields[1] or ''
+                    local hb, sl = slot_id:match('^battle%s+(%d+)%s+(%d+)$')
+                    if hb and sl then
+                        slots[slot_id] = {
+                            hotbar    = tonumber(hb),
+                            slot      = tonumber(sl),
+                            slot_id   = slot_id,
+                            cmd       = fields[2] or '',
+                            action    = fields[3] or '',
+                            target    = fields[4] or '',
+                            label     = fields[5] or '',
+                            type_hint = fields[6] or '',
+                            commented = commented,
+                            line      = line_num,
+                        }
+                    end
                 end
             end
         end
-        ::continue::
     end
     return { slots = slots, raw = src }
 end
