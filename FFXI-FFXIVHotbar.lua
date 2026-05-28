@@ -51,22 +51,28 @@ local DROPDOWN_W   = 280
 local DROPDOWN_ROW = 18
 local DROPDOWN_MAX = 18
 
+-- Color tuples are { alpha, red, green, blue }, alpha 0-255 (255 = fully
+-- opaque). The body / slot / dropdown / button backgrounds previously sat
+-- at 200-240 (78-94% opacity) which let the game world bleed through the
+-- panel — the user could see their character right through the editor.
+-- Bumped every panel-style fill to 250 so the addon reads as solid
+-- against any background. Text and border alphas left alone.
 local C_BORDER     = { 220, 70,  130, 200 }
-local C_TITLE_BG   = { 240, 30,  60,  120 }
+local C_TITLE_BG   = { 250, 30,  60,  120 }
 local C_TITLE_TXT  = { 255, 200, 200, 230 }
-local C_BODY_BG    = { 200, 15,  15,  35  }
-local C_SLOT_EMPTY = { 200, 30,  30,  60  }
-local C_SLOT_FILLED= { 220, 40,  90,  140 }
-local C_SLOT_SEL   = { 240, 100, 200, 100 }
+local C_BODY_BG    = { 250, 15,  15,  35  }
+local C_SLOT_EMPTY = { 250, 30,  30,  60  }
+local C_SLOT_FILLED= { 250, 40,  90,  140 }
+local C_SLOT_SEL   = { 250, 100, 200, 100 }
 local C_LABEL_TXT  = { 255, 230, 230, 230 }
 local C_CMD_TXT    = { 255, 180, 200, 240 }
-local C_DROP_BG    = { 240, 20,  30,  60  }
-local C_DROP_ROW_OFF= { 220, 35, 50,  90 }
-local C_DROP_ROW_ON = { 240, 70, 130, 180 }
+local C_DROP_BG    = { 250, 20,  30,  60  }
+local C_DROP_ROW_OFF= { 250, 35, 50,  90 }
+local C_DROP_ROW_ON = { 250, 70, 130, 180 }
 local C_DROP_TXT_OFF= { 255, 200, 200, 220 }
 local C_DROP_TXT_ON = { 255, 255, 255, 255 }
-local C_BTN_SAVE   = { 240, 50,  150, 60 }
-local C_BTN_CANCEL = { 240, 150, 60,  60 }
+local C_BTN_SAVE   = { 250, 50,  150, 60 }
+local C_BTN_CANCEL = { 250, 150, 60,  60 }
 local C_BTN_TXT    = { 255, 255, 255, 255 }
 local C_HINT       = { 255, 180, 180, 200 }
 local C_ERROR      = { 255, 240, 140, 140 }
