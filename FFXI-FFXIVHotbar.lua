@@ -629,6 +629,13 @@ windower.register_event('load', function()
     end, 3)
 end)
 
+-- Hide on /logout (return to character-select) without changing the
+-- user's settings.visible preference. The login event above rebuilds
+-- the window when they re-enter the world.
+windower.register_event('logout', function()
+    destroy_window()
+end)
+
 windower.register_event('unload', function()
     destroy_window()
 end)
