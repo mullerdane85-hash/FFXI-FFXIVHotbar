@@ -605,6 +605,23 @@ end)
 -- ============================================================================
 -- Lifecycle events
 -- ============================================================================
+
+-- Auto-hide while chat / macro editor is open so the hotbar can't ghost
+-- on top of the in-game text overlay. settings.visible is preserved;
+-- the bar reappears as soon as the input closes.
+local _was_input_open = false
+windower.register_event('prerender', function()
+    local info = windower.ffxi.get_info()
+    local input_open = info and info.chat_open == true
+    if input_open and not _was_input_open then
+        destroy_window()
+        _was_input_open = true
+    elseif (not input_open) and _was_input_open then
+        if settings.visible and info and info.logged_in then build_window() end
+        _was_input_open = false
+    end
+end)
+
 windower.register_event('login', function()
     coroutine.schedule(function()
         reload_file()
