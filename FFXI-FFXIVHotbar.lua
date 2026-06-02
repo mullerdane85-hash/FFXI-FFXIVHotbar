@@ -1,10 +1,17 @@
 --[[
+Copyright © 2026, mullerdane85-hash
+All rights reserved. BSD-3-Clause. See LICENSE.
+
 FFXI-FFXIVHotbar — GSUI-styled editor for XIVHotbar2 (aregowe/XIVHotbar2)
 keybind files. Click a slot, pick a command/action/target from dropdown,
 hit Save. Writes back to data/<Character>/<job>.lua with a .bak backup
 and fires `//xivhotbar reload` so the change shows up immediately.
 
-Toggle with H key (chat-aware) or //xh / //ffxihotbar.
+Toggle with H key (chat-aware: suppressed while chat / macro editor is
+open) or //xh / //ffxihotbar.
+
+Depends on XIVHotbar2 being installed; this addon edits its files,
+it doesn't replace it.
 ]]
 
 _addon.name     = 'FFXI-FFXIVHotbar'
