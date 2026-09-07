@@ -2,9 +2,28 @@
 
 ## 🔑 Hotkey
 
-**Default toggle: `H`**
+**Default toggle: `Alt+H`**
 
-Press `H` in-game to show or hide the editor window. Disabled while the chat bar or macro editor is open.
+Press `Alt+H` in-game to show or hide the editor window. Goes through Windower's
+`bind` system, so the keybind is automatically suppressed while the chat bar,
+search box, or macro editor is open — won't fight with typing.
+
+> The old bare-`H` toggle is gone. A single-letter hotkey consumed that
+> keystroke game-wide, so typing an `h` in chat or in a macro name toggled the
+> window. The toggle is modifier-based only now.
+
+**Rebind it any time:**
+
+| Command | Effect |
+|---|---|
+| `//hotbar hotkey` | Show the current combo |
+| `//hotbar hotkey ctrl h` | Switch to `Ctrl+H` |
+| `//hotbar hotkey alt+k` | Combined form also works |
+| `//hotbar hotkey off` | Disable the hotkey; `//xh` still works |
+
+Saved per character. `Ctrl`/`Alt` + a **number** is rejected on purpose — FFXI
+claims those for macro slots and eats the keystroke before Windower ever sees
+it, so the bind looks fine and silently never fires.
 
 Slash-command equivalents: `//xh`, `//ffxihotbar`.
 
