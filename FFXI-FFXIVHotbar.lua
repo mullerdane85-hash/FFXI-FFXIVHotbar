@@ -38,6 +38,10 @@ local actions  = require('libs/actions')
 local defaults = {
     pos     = { x = 260, y = 220 },
     visible = false,
+    -- Modifier-based toggle hotkey (Windower bind respects chat-input).
+    -- Default Alt+H. Replaces previous bare-H bind. //hotbar hotkey to change.
+    hotkey_modifier = 'alt',
+    hotkey_key      = 'h',
 }
 local settings = config.load(defaults)
 config.save(settings)
@@ -560,20 +564,10 @@ windower.register_event('mouse', function(mtype, x, y, delta, blocked)
 end)
 
 -- ============================================================================
--- Keyboard (H key toggle, chat-aware)
+-- Toggle hotkey via libs/hotkey.lua (Windower bind, chat-safe).
+-- Default Alt+H. Configure with //hotbar hotkey ...
 -- ============================================================================
-local DIK_H = 35
-windower.register_event('keyboard', function(dik, pressed, flags, blocked)
-    if blocked or not pressed then return false end
-    if dik == DIK_H then
-        local info = windower.ffxi.get_info()
-        if info and not info.chat_open then
-            toggle_window()
-            return true
-        end
-    end
-    return false
-end)
+local hotkey = require('libs/hotkey')
 
 -- ============================================================================
 -- Commands
@@ -587,6 +581,26 @@ windower.register_event('addon command', function(...)
         show_window()
     elseif cmd == 'hide' then
         hide_window()
+    elseif cmd == 'hotkey' or cmd == 'key' or cmd == 'rebind' then
+        if #args == 0 then
+            local cur = hotkey.display(settings.hotkey_modifier, settings.hotkey_key)
+            windower.add_to_chat(207, '[FFXIVHotbar] toggle hotkey = ' .. cur)
+            windower.add_to_chat(207, '  //hotbar hotkey <alt|ctrl|shift|none|off> <key>')
+        else
+            local mod, key, err = hotkey.parse_args(args[1], args[2])
+            if err then windower.add_to_chat(167, '[FFXIVHotbar] ' .. err)
+            else
+                local ok, msg = hotkey.bind('hotbar', 'toggle', mod, key)
+                if ok then
+                    settings.hotkey_modifier = mod
+                    settings.hotkey_key      = key
+                    config.save(settings)
+                    windower.add_to_chat(207, '[FFXIVHotbar] ' .. msg)
+                else
+                    windower.add_to_chat(167, '[FFXIVHotbar] ' .. tostring(msg))
+                end
+            end
+        end
     elseif cmd == 'reload' then
         reload_file(); build_window()
     elseif cmd == 'where' then
@@ -654,6 +668,11 @@ windower.register_event('job change', function()
 end)
 
 windower.register_event('load', function()
+    local ok, msg = hotkey.bind('hotbar', 'toggle',
+        settings.hotkey_modifier, settings.hotkey_key)
+    if ok then
+        windower.add_to_chat(207, '[FFXIVHotbar] ' .. msg .. '. //hotbar hotkey <alt|ctrl|none|off> <key> to rebind.')
+    end
     coroutine.schedule(function()
         if windower.ffxi.get_info().logged_in then
             reload_file()
@@ -670,5 +689,6 @@ windower.register_event('logout', function()
 end)
 
 windower.register_event('unload', function()
+    hotkey.unbind('hotbar')
     destroy_window()
 end)
